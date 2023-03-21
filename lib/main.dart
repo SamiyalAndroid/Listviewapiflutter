@@ -14,6 +14,8 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
+  ScrollController _scrollController = ScrollController();
+
   List? data;
 
   Future<String> getData() async {
@@ -33,7 +35,18 @@ class HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    super.initState();
     this.getData();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      double minScrollExtent1 = _scrollController.position.minScrollExtent;
+      double maxScrollExtent1 = _scrollController.position.maxScrollExtent;
+
+      animatetoMaxMin(maxScrollExtent1,minScrollExtent1,maxScrollExtent1,25,_scrollController);
+    }
+    );
+
+
+
   }
 
   @override
@@ -49,6 +62,7 @@ class HomePageState extends State<HomePage> {
           height: height * 0.35,
           width: width,
           child: ListView.builder(
+            controller: _scrollController,
             shrinkWrap: true,
             scrollDirection: Axis.horizontal,
             itemCount: data == null ? 0 : data!.length,
@@ -56,9 +70,8 @@ class HomePageState extends State<HomePage> {
               return Container(
                 height: height * 0.15,
                 width: width * 0.5,
-                margin: EdgeInsets.all(width*0.02),
+                margin: EdgeInsets.all(width * 0.02),
                 child: Card(
-                  
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,7 +100,8 @@ class HomePageState extends State<HomePage> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 color: Colors.black,
-                                fontWeight: FontWeight.w900,fontSize: width*0.04),
+                                fontWeight: FontWeight.w900,
+                                fontSize: width * 0.04),
                           ),
                         ),
                       ),
@@ -100,5 +114,11 @@ class HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  void animatetoMaxMin(double max,double min, double direction,int seconds, ScrollController scrollController) {
+    scrollController.animateTo(direction, duration: Duration(seconds: seconds), curve: Curves.linear);
+
+
   }
 }
